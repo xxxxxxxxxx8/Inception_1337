@@ -1,0 +1,126 @@
+
+services:
+  mariadb:
+    build: ./requirements/mariadb
+    container_name: mariadb
+    volumes:
+      - db_volume:/var/lib/mysql
+    env_file:
+      - .env
+    secrets:
+      - db_root_password
+      - db_password
+    restart: unless-stopped
+    networks:
+      - inception_network
+
+  wordpress:
+    build: ./requirements/wordpress
+    container_name: wordpress
+    volumes:
+      - wp_volume:/var/www/wordpress
+    env_file:
+      - .env
+    secrets:
+      - db_password
+      - wp_admin_password
+      - wp_user_password
+    depends_on:
+      - mariadb
+      - redis
+    restart: unless-stopped
+    networks:
+      - inception_network
+
+  nginx:
+    build: ./requirements/nginx
+    container_name: nginx
+    volumes:
+      - wp_volume:/var/www/wordpress
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
+    restart: unless-stopped
+    networks:
+      - inception_network
+
+  adminer:
+    build: ./requirements/bonus/adminer
+    container_name: adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+    networks:
+      - inception_network
+
+  static-site:
+    build: ./requirements/bonus/static-site
+    container_name: static-site
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+    networks:
+      - inception_network
+
+  redis:
+    build: ./requirements/bonus/redis
+    container_name: redis
+    restart: unless-stopped
+    networks:
+      - inception_network
+
+  portainer:
+    build: ./requirements/bonus/portainer
+    container_name: portainer
+    ports:
+      - "9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart: unless-stopped
+    networks:
+      - inception_network
+
+  ftp-server:
+    build: ./requirements/bonus/ftp-server
+    container_name: ftp-server
+    volumes:
+      - wp_volume:/var/www/wordpress
+    ports:
+      - "21:21"
+      - "30000-30009:30000-30009"
+    secrets:
+      - ftp_password
+    depends_on:
+      - wordpress
+    restart: unless-stopped
+    networks:
+      - inception_network
+
+volumes:
+  wp_volume:
+    name: wp_volume
+  db_volume:
+    name: db_volume
+  portainer_data:
+    name: portainer_data
+
+networks:
+  inception_network:
+    name: inception_network
+    driver: bridge
+
+secrets:
+  db_root_password:
+    file: ../secrets/db_root_password.txt
+  db_password:
+    file: ../secrets/db_password.txt
+  wp_admin_password:
+    file: ../secrets/wp_admin_password.txt
+  wp_user_password:
+    file: ../secrets/wp_user_password.txt
+  ftp_password:
+    file: ../secrets/ftp_password.txt

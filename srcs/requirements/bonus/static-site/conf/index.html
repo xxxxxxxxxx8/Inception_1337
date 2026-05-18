@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inception Project | mtarza@133.ma </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #00ff9d;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0e1a;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.5s ease;
+        }
+
+        .login-box {
+            background: #0d1117;
+            border: 1px solid #00ff9d;
+            padding: 40px;
+            width: 400px;
+            box-shadow: 0 0 30px rgba(0,255,157,0.2);
+        }
+
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00ff9d;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #0a0e1a;
+            border: 1px solid #00ff9d;
+            color: #00ff9d;
+            font-family: monospace;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background: #00ff9d;
+            color: #0a0e1a;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .error-msg {
+            color: #ff4444;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .main-content {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .terminal {
+            background: #0d1117;
+            border-radius: 8px;
+            border: 1px solid #00ff9d30;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            background: #1a1f2e;
+            padding: 10px 15px;
+            border-bottom: 1px solid #00ff9d30;
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .red { background: #ff5f56; }
+        .yellow { background: #ffbd2e; }
+        .green { background: #27c93f; }
+
+        .terminal-title {
+            color: #8b949e;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+
+        .terminal-body {
+            padding: 20px;
+        }
+
+        .prompt {
+            color: #00ff9d;
+        }
+
+        .command {
+            color: #ffbd2e;
+        }
+
+        .output {
+            color: #8b949e;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #00ff9d20;
+        }
+
+        th {
+            color: #00ff9d;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-right: 5px;
+        }
+
+        .badge-green {
+            background: #00ff9d20;
+            color: #00ff9d;
+            border: 1px solid #00ff9d;
+        }
+
+        .badge-red {
+            background: #ff444420;
+            color: #ff4444;
+            border: 1px solid #ff4444;
+        }
+
+        .badge-blue {
+            background: #4466ff20;
+            color: #4466ff;
+            border: 1px solid #4466ff;
+        }
+
+        .skill-bar {
+            border: 1px solid #00ff9d;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .skill-fill {
+            background: #00ff9d;
+            height: 20px;
+            color: #0a0e1a;
+            line-height: 20px;
+            padding-left: 8px;
+            font-size: 12px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        a {
+            color: #00ff9d;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .status-online {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #00ff9d;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            body {
+                padding: 10px;
+            }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 16px;
+            background: #00ff9d;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+
+<div id="loginOverlay" class="login-overlay">
+    <div class="login-box">
+        <h2>┌─[mtarza@inception]─[~/portfolio]</h2>
+        <h2>└─$ access --secure</h2>
+        <input type="text" id="username" placeholder="username">
+        <input type="password" id="password" placeholder="password">
+        <button onclick="login()">▶ AUTHENTICATE</button>
+        <div id="errorMsg" class="error-msg">Access Denied: Invalid credentials</div>
+    </div>
+</div>
+
+<div id="mainContent" class="main-content">
+    <div class="terminal">
+        <div class="terminal-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="terminal-title">mtarza@inception:~/portfolio</span>
+        </div>
+        <div class="terminal-body">
+            <div><span class="prompt">$</span> <span class="command">whoami</span></div>
+            <div class="output">mtarza | 42 Student | Inception Project | System Administrator</div>
+            <div><span class="prompt">$</span> <span class="command">cat README.md</span></div>
+            <div class="output">
+                <h1 style="color:#00ff9d; margin:10px 0;">🚀 INCEPTION PROJECT</h1>
+                <p>A complete Docker infrastructure with WordPress, MariaDB, Nginx, and 5 bonuses.</p>
+                <p>All services containerized and orchestrated with Docker Compose.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="terminal">
+            <div class="terminal-header">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="terminal-title">services/status</span>
+            </div>
+            <div class="terminal-body">
+                <table>
+                    <tr><th>SERVICE</th><th>STATUS</th><th>PORT</th></tr>
+                    <tr><td>🌐 NGINX</td><td><span class="status-online"></span> Running</td><td>443</td></tr>
+                    <tr><td>📝 WordPress</td><td><span class="status-online"></span> Running</td><td>9000 (int)</td></tr>
+                    <tr><td>🗄️ MariaDB</td><td><span class="status-online"></span> Running</td><td>3306 (int)</td></tr>
+                    <tr><td>🛠️ Adminer</td><td><span class="status-online"></span> Running</td><td>8080</td></tr>
+                    <tr><td>🎨 Static Site</td><td><span class="status-online"></span> Running</td><td>8081</td></tr>
+                    <tr><td>🐘 Redis</td><td><span class="status-online"></span> Running</td><td>6379 (int)</td></tr>
+                    <tr><td>🐳 Portainer</td><td><span class="status-online"></span> Running</td><td>9443</td></tr>
+                    <tr><td>📁 FTP Server</td><td><span class="status-online"></span> Running</td><td>21</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="terminal">
+            <div class="terminal-header">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="terminal-title">access/urls</span>
+            </div>
+            <div class="terminal-body">
+                <table>
+                    <tr><th>SERVICE</th><th>URL</th></tr>
+                    <tr><td>WordPress</td><td><a href="https://mtarza.42.fr" target="_blank">https://mtarza.42.fr</a></td></tr>
+                    <tr><td>WordPress Admin</td><td><a href="https://mtarza.42.fr/wp-admin" target="_blank">https://mtarza.42.fr/wp-admin</a></td></tr>
+                    <tr><td>Adminer (DB)</td><td><a href="http://mtarza.42.fr:8080" target="_blank">http://mtarza.42.fr:8080</a></td></tr>
+                    <tr><td>Portainer</td><td><a href="https://mtarza.42.fr:9443" target="_blank">https://mtarza.42.fr:9443</a></td></tr>
+                    <tr><td>FTP Server</td><td>ftps://mtarza.42.fr:21</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="terminal">
+        <div class="terminal-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="terminal-title">docs/project.md</span>
+        </div>
+        <div class="terminal-body">
+            <div><span class="prompt">$</span> <span class="command">cat architecture.md</span></div>
+            <div class="output">
+                <pre style="color:#8b949e; font-family:monospace; font-size:12px;">
+┌─────────────────────────────────────────────────────────────────┐
+│                        DOCKER HOST                              │
+│                                                                 │
+│   ┌──────────┐    ┌──────────┐    ┌──────────┐                 │
+│   │  NGINX   │◄──►│WORDPRESS │◄──►│ MARIADB  │                 │
+│   │  :443    │    │  :9000   │    │  :3306   │                 │
+│   └────┬─────┘    └────┬─────┘    └────┬─────┘                 │
+│        │               │               │                        │
+│   ┌────▼─────┐    ┌────▼─────┐    ┌────▼─────┐                 │
+│   │ ADMINER  │    │  REDIS   │    │   FTP    │                 │
+│   │  :8080   │    │  :6379   │    │   :21    │                 │
+│   └──────────┘    └──────────┘    └──────────┘                 │
+│                                                                 │
+│   ┌──────────┐    ┌──────────┐                                 │
+│   │STATIC-SITE│    │PORTAINER │                                 │
+│   │  :8081   │    │  :9443   │                                 │
+│   └──────────┘    └──────────┘                                 │
+│                                                                 │
+│   Volumes: wp_volume | db_volume | portainer_data              │
+│   Network: inception_network (bridge)                          │
+└─────────────────────────────────────────────────────────────────┘
+                </pre>
+            </div>
+
+            <div><span class="prompt">$</span> <span class="command">cat bonuses.md</span></div>
+            <div class="output">
+                <table>
+                    <tr><th>Bonus</th><th>Status</th><th>Description</th></tr>
+                    <tr><td>1. Adminer</td><td><span class="badge badge-green">✅ DONE</span></td><td>Database management UI</td></tr>
+                    <tr><td>2. Static Website</td><td><span class="badge badge-green">✅ DONE</span></td><td>Hacker-style portfolio</td></tr>
+                    <tr><td>3. Redis Cache</td><td><span class="badge badge-green">✅ DONE</span></td><td>WordPress performance boost</td></tr>
+                    <tr><td>4. FTP Server</td><td><span class="badge badge-green">✅ DONE</span></td><td>FTPS file uploads</td></tr>
+                    <tr><td>5. Portainer</td><td><span class="badge badge-green">✅ DONE</span></td><td>Docker management GUI</td></tr>
+                </table>
+            </div>
+
+            <div><span class="prompt">$</span> <span class="command">cat credentials.md</span></div>
+            <div class="output">
+                <table>
+                    <tr><th>Service</th><th>Username</th><th>Password Location</th></tr>
+                    <tr><td>WordPress Admin</td><td>supervisor</td><td>secrets/wp_admin_password.txt</td></tr>
+                    <tr><td>WordPress Editor</td><td>editor</td><td>secrets/wp_user_password.txt</td></tr>
+                    <tr><td>MariaDB (wpuser)</td><td>wpuser</td><td>secrets/db_password.txt</td></tr>
+                    <tr><td>MariaDB (root)</td><td>root</td><td>secrets/db_root_password.txt</td></tr>
+                    <tr><td>FTP Server</td><td>ftpuser</td><td>secrets/ftp_password.txt</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="terminal">
+            <div class="terminal-header">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="terminal-title">commands/makefile</span>
+            </div>
+            <div class="terminal-body">
+                <table>
+                    <tr><th>Command</th><th>Action</th></tr>
+                    <tr><td>make all</td><td>Build & start all services</td></tr>
+                    <tr><td>make up</td><td>Start containers</td></tr>
+                    <tr><td>make down</td><td>Stop containers</td></tr>
+                    <tr><td>make clean</td><td>Stop & remove volumes</td></tr>
+                    <tr><td>make re</td><td>Full rebuild</td></tr>
+                    <tr><td>make logs</td><td>View all logs</td></tr>
+                    <tr><td>make status</td><td>Show container status</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="terminal">
+            <div class="terminal-header">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="terminal-title">commands/docker</span>
+            </div>
+            <div class="terminal-body">
+                <table>
+                    <tr><th>Command</th><th>Purpose</th></tr>
+                    <tr><td>docker ps</td><td>List running containers</td></tr>
+                    <tr><td>docker logs &lt;name&gt;</td><td>View container logs</td></tr>
+                    <tr><td>docker exec -it &lt;name&gt; sh</td><td>Enter container</td></tr>
+                    <tr><td>docker volume ls</td><td>List volumes</td></tr>
+                    <tr><td>docker network ls</td><td>List networks</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="terminal">
+        <div class="terminal-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="terminal-title">status/system</span>
+        </div>
+        <div class="terminal-body">
+            <div><span class="prompt">$</span> <span class="command">./health-check.sh</span></div>
+            <div class="output">
+                <span class="badge badge-green">🟢 WordPress</span>
+                <span class="badge badge-green">🟢 MariaDB</span>
+                <span class="badge badge-green">🟢 Redis</span>
+                <span class="badge badge-green">🟢 FTP</span>
+                <span class="badge badge-green">🟢 Adminer</span>
+                <span class="badge badge-green">🟢 Portainer</span>
+                <br><br>
+                <span class="prompt">$</span> <span class="command">echo "✅ All systems operational - Ready for evaluation!"</span>
+                <div class="output">✅ All systems operational - Ready for evaluation!</div>
+                <br>
+                <span class="prompt">$</span> <span class="command"><span class="cursor"></span></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function login() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        if (username === 'mtarza' && password === '42network') {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+        } else {
+            document.getElementById('errorMsg').style.display = 'block';
+        }
+    }
+
+    document.getElementById('username').focus();
+
+    document.getElementById('password').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            login();
+        }
+    });
+</script>
+
+</body>
+</html>
