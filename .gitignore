@@ -1,0 +1,27 @@
+# Environment variables
+.env
+.env.*
+
+# Secrets (Docker compose secrets)
+secrets/
+!secrets/.gitkeep
+
+# Host data directories (created at runtime)
+/data/
+/home/*/data/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Docker
+docker-compose.override.yml
