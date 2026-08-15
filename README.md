@@ -6,7 +6,7 @@
 
 This project aims to expand knowledge in system administration using Docker and Docker Compose by building a complete virtualized web infrastructure inside a virtual machine.
 
----
+--- 
 
 # What is Inception?
 
