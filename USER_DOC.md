@@ -2,11 +2,6 @@
 
 ## Overview
 
-cat > ~/inception/USER_DOC.md << 'EOF'
-# User Documentation - Inception Project
-
-## Overview
-
 This project provides a complete WordPress website running in Docker containers. The infrastructure includes:
 
 - 🌐 **WordPress Website** - Your blog/content management system

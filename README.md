@@ -130,7 +130,7 @@ cd inception
 
 ---
 
-# Create Secrets
+## Create Secrets
 
 ```bash
 mkdir -p secrets
@@ -146,7 +146,7 @@ chmod 600 secrets/*.txt
 
 ---
 
-# Configure Hosts File
+## Configure Hosts File
 
 ```bash
 echo "127.0.0.1 mtarza.42.fr" | sudo tee -a /etc/hosts
@@ -154,7 +154,7 @@ echo "127.0.0.1 mtarza.42.fr" | sudo tee -a /etc/hosts
 
 ---
 
-# Build and Start Project
+## Build and Start Project
 
 ```bash
 make all
@@ -335,8 +335,7 @@ Portainer provides a web dashboard to:
 AI was used for:
 
 - Documentation structure
-- Docimntartion 
-
+- Documentation writing
 
 All generated content was reviewed, tested, and fully understood before use.
 
@@ -373,14 +372,38 @@ docker network inspect inception_network
 
 ---
 
-# Resources
+# References
 
+## Official Documentation
+
+- [42 Subject (Inception)](https://cdn.intra.42.fr/pdf/pdf/92324/en.subject.pdf)
 - Docker Documentation: https://docs.docker.com/
 - Docker Compose: https://docs.docker.com/compose/
+- Docker Engine Reference: https://docs.docker.com/engine/reference/
 - NGINX Documentation: https://nginx.org/en/docs/
 - MariaDB Documentation: https://mariadb.com/docs/
 - WordPress CLI: https://developer.wordpress.org/cli/commands/
 - Redis Documentation: https://redis.io/docs/
+- PHP-FPM Documentation: https://www.php.net/manual/en/install.fpm.php
+- vsftpd Documentation: https://security.appspot.com/vsftpd.html
+- Adminer: https://www.adminer.org/
+- Portainer: https://docs.portainer.io/
+- OpenSSL: https://www.openssl.org/docs/
+
+## Guides & Tutorials
+
+- Docker Networking: https://docs.docker.com/network/
+- Docker Volumes: https://docs.docker.com/storage/volumes/
+- Docker Secrets: https://docs.docker.com/engine/swarm/secrets/
+- NGINX Reverse Proxy Guide: https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/
+- Docker Compose Secrets: https://docs.docker.com/compose/how-tos/use-secrets/
+- WordPress Object Cache (Redis): https://developer.wordpress.org/plugins/plugins-codex/performance/
+
+## 42 Community Resources
+
+- [42 Inception Overview](https://github.com/search?q=inception+42&type=repositories)
+- [42 Docker Tutorial](https://docs.docker.com/get-started/overview/)
+- [Containerization basics (IBM)](https://www.ibm.com/cloud/learn/containerization)
 
 ---
 
